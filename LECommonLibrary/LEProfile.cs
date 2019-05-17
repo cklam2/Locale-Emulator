@@ -1,4 +1,6 @@
-﻿namespace LECommonLibrary
+﻿using System;
+
+namespace LECommonLibrary
 {
     public struct LEProfile
     {
@@ -56,6 +58,23 @@
             RedirectRegistry = redirectRegistry;
             IsAdvancedRedirection = isAdvancedRedirection;
             RunWithSuspend = runWithSuspend;
+        }
+
+        public static LEProfile FromCultureCode(string cultureCode)
+        {
+            return new LEProfile
+            {
+                Name = cultureCode,
+                Guid = System.Guid.NewGuid().ToString(),
+                ShowInMainMenu = false,
+                Parameter = string.Empty,
+                Location = cultureCode,
+                Timezone = TimeZoneInfo.Local.Id,
+                RunAsAdmin = false,
+                RedirectRegistry = true,
+                IsAdvancedRedirection = false,
+                RunWithSuspend = false
+            };        
         }
     }
 }

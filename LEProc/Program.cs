@@ -58,12 +58,14 @@ namespace LEProc
                     "\r\n" +
                     "Usage: LEProc.exe\r\n" +
                     "\tpath\r\n" +
+                    "\t-runwith path [args] -cc cultureCode\r\n" +
                     "\t-run path [args]\r\n" +
                     "\t-runas guid path [args]\r\n" +
                     "\t-manage path\r\n" +
                     "\t-global\r\n" +
                     "\r\n" +
                     "path\tFull path of the target application.\r\n" +
+                    "cultureCode\tThe culture code to use, eg en-US\r\n" +
                     "guid\tGuid of the target profile (in LEConfig.xml).\r\n" +
                     "args\tAdditional arguments will be passed to the application.\r\n" +
                     "\r\n" +
@@ -92,6 +94,13 @@ namespace LEProc
 
                 switch (Args[0])
                 {
+                    case "-runwith": //-run %APP% %CULTURECODE%
+                        int ccIndex = Array.FindIndex(Args, v => v == "-cc");
+                        string cultureCode = Args[ccIndex + 1];
+                        Array.Resize(ref Args, ccIndex);
+                        RunWithDefaultProfileCustomCulture(Args[1], cultureCode);
+                        break;
+
                     case "-run": //-run %APP%
                         RunWithIndependentProfile(Args[1]);
                         break;
@@ -150,6 +159,14 @@ namespace LEProc
             var profile = LEConfig.GetProfiles().First(p => p.Guid == guid);
 
             DoRunWithLEProfile(path, 3, profile);
+        }
+
+        private static void RunWithDefaultProfileCustomCulture(string path, string cultureCode)
+        {
+            path = SystemHelper.EnsureAbsolutePath(path);
+
+            var profile = LEProfile.FromCultureCode(cultureCode);
+            DoRunWithLEProfile(path, 2, profile);
         }
 
         private static void RunWithIndependentProfile(string path)
