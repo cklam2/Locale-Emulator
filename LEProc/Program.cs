@@ -161,9 +161,12 @@ namespace LEProc
             DoRunWithLEProfile(path, 3, profile);
         }
 
-        private static void RunWithDefaultProfileCustomCulture(string path, string cultureCode)
+        private static void RunWithDefaultProfileCustomCulture(string path, string culture)
         {
             path = SystemHelper.EnsureAbsolutePath(path);
+
+            // Culture value can either be name or LCID (so eg zh-CN or 2052)
+            string cultureCode = int.TryParse(culture, out int lcid) ? new CultureInfo(lcid).Name : culture;
 
             var profile = LEProfile.FromCultureCode(cultureCode);
             DoRunWithLEProfile(path, 2, profile);
